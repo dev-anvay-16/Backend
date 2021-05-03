@@ -6,7 +6,7 @@ const path = require('path')
 
 const Post = require('../models/post');
 const User = require('../models/user');
-const isAuth = require('../middleware/is-auth');
+
 
 
 
@@ -14,54 +14,6 @@ const clearImage = (filePath) => {
     console.log(filePath)
     filePath = path.join(__dirname, "..", filePath);
     fs.unlink(filePath, err => console.log(err));
-}
-
-exports.getStatus = (req, res, next) => {
-    User.findById(req.userId).then(
-        user => {
-            if (!user) {
-                const error = new Error('No User Found');
-                error.statusCode = 404;
-                throw error;
-            }
-            res.status(200).json({ messgae: "Fetched Status", status: user.status });
-        }
-    ).catch(
-        err => {
-           if (!err.statusCode) {
-                err.statusCode = 500
-            }
-            next(err);
-        }
-    )
-}
-
-exports.updateStatus = (req, res, next) => {
-  
-    const newStatus = req.body.status;
-    console.log("Status = ", req.body);
-    User.findById(req.userId).then(
-        user => {
-            if (!user) {
-                const error = new Error('No User Found');
-                error.statusCode = 404;
-                throw error;
-            }
-            console.log(user);
-            user.status = newStatus;
-            return user.save();
-        }
-    ).then(result => {
-        res.status(200).json({ messgae: "Update Status" });
-    })
-        .catch(
-        err => {
-           if (!err.statusCode) {
-                err.statusCode = 500
-            }
-            next(err);
-        }
-    )
 }
 
 exports.getPosts = (req, res, next) => {
@@ -175,11 +127,9 @@ exports.updatePost = (req, res, next) => {
     let imageUrl = req.body.image;
     const title = req.body.title;
     const content = req.body.content;
-    console.log(imageUrl,title,content)
     if (req.file) {
         imageUrl = req.file.path.replace("\\", "/");
     }
-    console.log(imageUrl)
     if (!imageUrl) {
             const error = new Error('No File Picked');
             error.statusCode = 422;

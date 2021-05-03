@@ -8,9 +8,6 @@ const isAuth = require('../middleware/is-auth');
 
 
 
-router.get("/status", isAuth, feedController.getStatus)
-
-router.put("/status", isAuth, feedController.updateStatus);
 
 
 
